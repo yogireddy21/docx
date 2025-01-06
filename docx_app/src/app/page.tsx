@@ -1,7 +1,8 @@
+import { Button } from "@/components/ui/button";
 const Home = () => {
   return ( 
     <div className="flex min-h-screen justify-center items-center">
-      <p>Helllo World</p>
+      <Button>Helllo World</Button>
     </div>
    );
 } 
