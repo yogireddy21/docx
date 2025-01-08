@@ -5,6 +5,8 @@ import TaskList from '@tiptap/extension-task-list'
 import Table from '@tiptap/extension-table'
 import Image from '@tiptap/extension-image'
 import ImageResize from 'tiptap-extension-resize-image'
+import FontFamily from '@tiptap/extension-font-family'
+import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline'
 import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
@@ -59,6 +61,8 @@ const editor = useEditor({
       Image,
       ImageResize,
       Underline,
+      FontFamily,
+      TextStyle,
     ],
     content: `
         <table>

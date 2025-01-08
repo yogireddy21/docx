@@ -2,8 +2,47 @@
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/use-editor-store";
 import { Separator } from "@radix-ui/react-context-menu";
-import { BoldIcon, ItalicIcon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon } from "lucide-react";
+import { BoldIcon, ChevronDownIcon, ItalicIcon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 
+const FontFamilyButton = ()=>{
+    const {editor} =useEditorStore();
+    const fonts= [
+        { label: 'Arial', value: 'Arial, sans-serif' },
+        { label: 'Courier New', value: '"Courier New", monospace' },
+        { label: 'Georgia', value: 'Georgia, serif' },
+        { label: 'Times New Roman', value: '"Times New Roman", serif' },
+        { label: 'Verdana', value: 'Verdana, sans-serif' },
+        { label: 'Tahoma', value: 'Tahoma, sans-serif' },
+        { label: 'Roboto', value: 'Roboto, sans-serif' },
+        { label: 'Open Sans', value: '"Open Sans", sans-serif' }
+    ];
+
+    return(
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button className="h-7 w-[120px] shrink-0 flex items-center justify-between rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+                   <span className="truncate">
+                       {editor?.getAttributes("textStyle").fontFamily||"Arial"}
+                   </span>
+                   <ChevronDownIcon className="ml-2 size-4 shrink-0"/>
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
+                    {fonts.map(({label,value})=>(
+                        <button onClick={()=> editor?.chain().focus().setFontFamily(value).run()} key={value} className={cn(
+                            "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
+                            editor?.getAttributes("textStyle").fontFamily === value && "bg-neutral-200/80"
+                        )} style={{fontFamily:value}}>
+                            <span className="text-sm">{label}</span>
+
+                        </button>
+                    ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+     
+};
 interface ToolbarButtonProps{
     onClick?: () =>void;
     isActive?:boolean;
@@ -108,7 +147,7 @@ export const  Toolbar= () => {
                 <ToolbarButton key={item.label} {...item} />
             ))}
             <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
-            {/* TODO:Font fmaily*/}
+            <FontFamilyButton/>
             <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
             {/* TODO:Heading*/}
             <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
@@ -117,14 +156,14 @@ export const  Toolbar= () => {
             {sections[1].map((item)=>(
                 <ToolbarButton key={item.label} {...item} /> 
                 ))}
-             {/* TODO:Heading*/}
-             {/* TODO:Heading*/}
+             {/* TODO:Text-color*/}
+             {/* TODO:Highlight color*/}
              <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
-              {/* TODO:Heading*/}
-             {/* TODO:Heading*/}
-              {/* TODO:Heading*/}
-             {/* TODO:Heading*/}
-              {/* TODO:Heading*/}
+              {/* TODO:Link*/}
+             {/* TODO:Image*/}
+              {/* TODO:Align*/}
+             {/* TODO:Line-height*/}
+              {/* TODO:List */}
               {sections[2].map((item)=>(
                 <ToolbarButton key={item.label} {...item} /> 
                 ))}
