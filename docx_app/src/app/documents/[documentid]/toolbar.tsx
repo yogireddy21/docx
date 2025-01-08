@@ -2,14 +2,97 @@
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/use-editor-store";
 import { Separator } from "@radix-ui/react-context-menu";
-import { BoldIcon, ChevronDownIcon, HighlighterIcon, ItalicIcon, Link2Icon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon } from "lucide-react";
+import { SearchIcon, UploadIcon,BoldIcon, ChevronDownIcon, HighlighterIcon, ImageIcon, ItalicIcon, Link2Icon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import type { Level } from "@tiptap/extension-heading";
 import {type ColorResult,CirclePicker,SketchPicker} from "react-color";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Dialog,DialogContent,DialogFooter,DialogTitle,DialogHeader } from "@/components/ui/dialog";
+const ImageButton = () => {
+    const { editor } = useEditorStore();
+    const [value, setValue] = useState(''); // Store the image URL input by the user
+    const [DialogOpen, setIsDialogOpen] = useState(false); // Boolean state for dialog visibility
 
+    const insertImage = (url: string) => {
+        if (editor && url) {
+            editor.chain().focus().setImage({ src: url }).run(); // Insert the image with the URL
+        }
+        setValue(''); // Clear the value after inserting the image
+    };
+
+    const onUpload = () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file) {
+                const imageUrl = URL.createObjectURL(file);
+                insertImage(imageUrl); // Insert image after upload
+            }
+        };
+        input.click();
+    };
+
+    const handleImageUrlSubmit = () => {
+        if (value) {
+            insertImage(value);
+            setValue("");
+            setIsDialogOpen(false); // Close the dialog after image is inserted
+        }
+    };
+
+    return (
+        <>
+            {/* Dropdown Menu */}
+            <DropdownMenu onOpenChange={(open) => {
+                if (open) setValue(''); // Reset the value when the menu opens
+            }}>
+                <DropdownMenuTrigger asChild>
+                    <button className="h-7 min-w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+                        <ImageIcon className="size-4" />
+                    </button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent className="p-2.5 flex items-center gap-x-2 flex-col">
+                    {/* Upload Image Button */}
+                    <Button onClick={onUpload} className="bg-black text-white px-3 py-1 rounded mt-2 flex items-center justify-center gap-2">
+                        <UploadIcon className="size-4" />
+                        Upload
+                    </Button>
+
+                    {/* Search Button */}
+                    <Button onClick={() => setIsDialogOpen(true)} className="bg-black text-white px-3 py-1 rounded mt-2 flex items-center justify-center gap-2">
+                        <SearchIcon className="size-4" />
+                        Search
+                    </Button>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Dialog for URL Input */}
+            <Dialog open={DialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Insert Image URL</DialogTitle>
+                    </DialogHeader>
+                    <Input
+                        placeholder="Enter image URL"
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)} // Handle URL input
+                        className="w-full"
+                    />
+                    <DialogFooter>
+                        <Button onClick={handleImageUrlSubmit} className="bg-black text-white px-4 py-1 rounded">
+                            Insert Image
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
+};
 const LinkButton = () => {
     const { editor } = useEditorStore();
     const [value, setValue] = useState(editor?.getAttributes("link").href || ""); // Store the link URL
@@ -305,7 +388,7 @@ export const  Toolbar= () => {
             <TextHighlightButton/>
              <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
             <LinkButton/>
-             {/* TODO:Image*/}
+            <ImageButton/>
               {/* TODO:Align*/}
              {/* TODO:Line-height*/}
               {/* TODO:List */}
