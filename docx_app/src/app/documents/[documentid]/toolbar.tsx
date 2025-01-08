@@ -2,11 +2,49 @@
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/use-editor-store";
 import { Separator } from "@radix-ui/react-context-menu";
-import { BoldIcon, ChevronDownIcon, HighlighterIcon, ItalicIcon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon } from "lucide-react";
+import { BoldIcon, ChevronDownIcon, HighlighterIcon, ItalicIcon, Link2Icon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import type { Level } from "@tiptap/extension-heading";
 import {type ColorResult,CirclePicker,SketchPicker} from "react-color";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+const LinkButton = () => {
+    const { editor } = useEditorStore();
+    const [value, setValue] = useState(editor?.getAttributes("link").href || ""); // Store the link URL
+
+    const onChange = (href: string) => {
+        if (editor) {
+            editor.chain().focus().extendMarkRange("link").setLink({ href }).run();
+        }
+        setValue(""); // Clear the value after applying the link
+    };
+
+    return (
+        <DropdownMenu onOpenChange={(open) =>{
+            if(open) setValue(editor?.getAttributes("link").href || "")}
+        }>
+            <DropdownMenuTrigger asChild>
+                <button className="h-7 min-w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+                    <Link2Icon className="size-4" />
+                </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="p-2.5 flex items-center gap-x-2">
+                <Input
+                    placeholder="https://example.com"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)} // Handle URL input
+                    className="w-full"
+                />
+                <Button onClick={() => onChange(value)}>
+                    Apply
+                </Button>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+};
 
 const TextHighlightButton = () => {
     const { editor } = useEditorStore();
@@ -266,7 +304,7 @@ export const  Toolbar= () => {
             <TextColorButton/>
             <TextHighlightButton/>
              <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
-              {/* TODO:Link*/}
+            <LinkButton/>
              {/* TODO:Image*/}
               {/* TODO:Align*/}
              {/* TODO:Line-height*/}

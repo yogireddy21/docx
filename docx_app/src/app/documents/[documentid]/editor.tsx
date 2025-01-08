@@ -15,6 +15,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { useEditorStore } from '@/store/use-editor-store';
 import {Color} from  '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
+import Link from '@tiptap/extension-link';
 
 export const Editor = () =>{
 const {setEditor}=useEditorStore();
@@ -70,6 +71,12 @@ const editor = useEditor({
       Highlight.configure({
         multicolor:true,
       }),
+      Link.configure({
+        openOnClick:false,
+        autolink:true,
+        defaultProtocol:"https",
+      }),
+      
     ],
     content: `
         <table>
