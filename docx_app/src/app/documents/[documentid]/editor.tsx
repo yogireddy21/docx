@@ -13,6 +13,9 @@ import TableHeader from '@tiptap/extension-table-header'
 import TableRow from '@tiptap/extension-table-row'
 import StarterKit from '@tiptap/starter-kit'
 import { useEditorStore } from '@/store/use-editor-store';
+import {Color} from  '@tiptap/extension-color';
+import Highlight from '@tiptap/extension-highlight';
+
 export const Editor = () =>{
 const {setEditor}=useEditorStore();
 const editor = useEditor({
@@ -63,6 +66,10 @@ const editor = useEditor({
       Underline,
       FontFamily,
       TextStyle,
+      Color,
+      Highlight.configure({
+        multicolor:true,
+      }),
     ],
     content: `
         <table>
