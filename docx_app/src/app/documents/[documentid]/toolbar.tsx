@@ -2,15 +2,19 @@
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/use-editor-store";
 import { Separator } from "@radix-ui/react-context-menu";
-import { SearchIcon, UploadIcon,BoldIcon, ChevronDownIcon, HighlighterIcon, ImageIcon, ItalicIcon, Link2Icon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon, AlignLeftIcon, AlignCenterIcon, AlignRightIcon, AlignJustifyIcon, ListIcon } from "lucide-react";
+import { PlusIcon, MinusIcon, SearchIcon, UploadIcon,BoldIcon, ChevronDownIcon, HighlighterIcon, ImageIcon, ItalicIcon, Link2Icon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SpellCheckIcon, UnderlineIcon, Undo2Icon, AlignLeftIcon, AlignCenterIcon, AlignRightIcon, AlignJustifyIcon, ListIcon } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import type { Level } from "@tiptap/extension-heading";
 import {type ColorResult,CirclePicker,SketchPicker} from "react-color";
-import { useState } from "react";
+import React,{ useState ,useEffect} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog,DialogContent,DialogFooter,DialogTitle,DialogHeader } from "@/components/ui/dialog";
+
+
+
 const ImageButton = () => {
+
     const { editor } = useEditorStore();
     const [value, setValue] = useState(''); // Store the image URL input by the user
     const [DialogOpen, setIsDialogOpen] = useState(false); // Boolean state for dialog visibility
@@ -154,6 +158,79 @@ const TextHighlightButton = () => {
                 />
             </DropdownMenuContent>
         </DropdownMenu>
+    );
+};
+const FontSizeButton: React.FC = () => {
+    const { editor } = useEditorStore();
+
+    // Get current font size from editor attributes
+    const currentFontSize = editor?.getAttributes("textStyle")?.fontSize?.replace("px", "") || "16";
+
+    // State for input value
+    const [inputValue, setInputValue] = useState<string>(currentFontSize);
+
+    // Update the font size in the editor and the state
+    const updateFontSize = (newSize: string) => {
+        const size = parseInt(newSize, 10);
+
+        if (!isNaN(size) && size > 0) {
+            editor?.chain().focus().setFontSize(`${size}px`).run();
+            setInputValue(newSize);
+        }
+    };
+
+    const increment = () => {
+        const newSize = parseInt(inputValue, 10) + 1;
+        updateFontSize(newSize.toString());
+    };
+
+    const decrement = () => {
+        const newSize = parseInt(inputValue, 10) - 1;
+        if (newSize > 0) updateFontSize(newSize.toString());
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(e.target.value);
+    };
+
+    const handleInputBlur = () => {
+        updateFontSize(inputValue);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            updateFontSize(inputValue);
+            editor?.commands.focus();
+        }
+    };
+
+    return (
+        <div className="flex items-center gap-2">
+            {/* Minus Button */}
+            <MinusIcon
+                className="size-4"
+                onClick={decrement}
+                aria-label="Decrease Font Size"
+            />
+
+            {/* Input Box for Font Size */}
+            <input
+                type="text"
+                className="w-8 px-1 py-1 text-sm text-center cursor-text border border-neutral-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-neutral-400"
+                value={inputValue}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                onKeyDown={handleKeyDown}
+             />
+
+            {/* Plus Button */}
+            <PlusIcon
+                className="size-4"
+                onClick={increment}
+                aria-label="Increase Font Size"
+            />
+        </div>
     );
 };
 const ListButton = () => {
@@ -478,7 +555,7 @@ export const  Toolbar= () => {
             <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
            <HeadingLevelButton/>
             <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
-            {/* TODO:FontSze*/}
+           <FontSizeButton/>
             <Separator aria-orientation="vertical" className="h-6 bg-neutral-300" />
             {sections[1].map((item)=>(
                 <ToolbarButton key={item.label} {...item} /> 
