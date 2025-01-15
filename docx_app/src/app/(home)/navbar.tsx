@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SearchInput } from "./search-input";
-
+import {UserButton} from "@clerk/nextjs"
 const Navbar = () => {
   return (
     <nav className="flex items-center justify-between h-16 w-full px-6 py-3 border-b">
@@ -12,7 +12,7 @@ const Navbar = () => {
         <h3 className="text-xl font-semibold">DocMind</h3>
       </div>
       <SearchInput />
-      <div className="w-[200px]" />
+      <UserButton/>
     </nav>
   );
 };
