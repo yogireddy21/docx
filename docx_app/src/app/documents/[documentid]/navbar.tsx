@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { useEditorStore } from '@/store/use-editor-store';
 import { blob } from 'stream/consumers';
+import { OrganizationSwitcher, UserButton } from '@clerk/nextjs';
 
 const Navbar = () => {
 const {editor} =useEditorStore();
@@ -210,6 +211,14 @@ const {editor} =useEditorStore();
             </Menubar>
           </div>
         </div>
+      </div>
+      <div className="flex gap-3 items-center pl-6">
+         <OrganizationSwitcher afterCreateOrganizationUrl="/"
+         afterSelectOrganizationUrl="/"
+         afterLeaveOrganizationUrl="/"
+         afterSelectPersonalUrl="/"
+         />
+         <UserButton/>
       </div>
     </nav>
   );
