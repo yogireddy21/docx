@@ -6,12 +6,14 @@ import TemplateGallery from "./template-gallery";
 import { usePaginatedQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import DocumentsTable from "./dcoumnets-table";
+import { useSearchParam } from "@/hooks/use-search-params";
 
 const Home = () => {
+  const [search] =useSearchParam();
   // Fetch documents using Convex's useQuery
  const { results, status, loadMore } = usePaginatedQuery(
   api.documents.get,
-  { }, // Provide the required `paginationOpts`
+  { search}, // Provide the required `paginationOpts`
   { initialNumItems: 5 } // Optionally specify the initial number of items to load
 );
 
