@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ExternalLinkIcon, MoreVertical, TrashIcon } from "lucide-react";
+import { ExternalLinkIcon, MoreVertical, TrashIcon, Edit3 } from "lucide-react";
 import { Id } from "../../../convex/_generated/dataModel";
 import {
   DropdownMenu,
@@ -7,8 +7,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"; // Update this based on your UI library
-import { useRouter } from "next/router";
 import { RemoveDialog } from "./remove-dialog";
+import { RenameDialog } from "./rename-dialog"; // Import RenameDialog
 
 interface DocumentMenuProps {
   documentId: Id<"documents">;
@@ -17,7 +17,6 @@ interface DocumentMenuProps {
 }
 
 const DocumentMenu = ({ documentId, title, onNewTab }: DocumentMenuProps) => {
-    
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,15 +25,31 @@ const DocumentMenu = ({ documentId, title, onNewTab }: DocumentMenuProps) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
+        {/* Rename Document Option */}
+        <RenameDialog documentId={documentId} currentTitle={title}>
+          <DropdownMenuItem
+            onSelect={(e) => e.preventDefault()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Edit3 className="w-4 h-4 mr-2" />
+            Rename
+          </DropdownMenuItem>
+        </RenameDialog>
+
+        {/* Remove Document Option */}
         <RemoveDialog documentId={documentId}>
-           <DropdownMenuItem onSelect={(e)=>e.preventDefault()}
-           onClick={(e)=>e.stopPropagation()}>
-             <TrashIcon className="size-4mr-2"/>
-             Remove
-           </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={(e) => e.preventDefault()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <TrashIcon className="w-4 h-4 mr-2" />
+            Remove
+          </DropdownMenuItem>
         </RemoveDialog>
+
+        {/* Open in New Tab Option */}
         <DropdownMenuItem onClick={() => onNewTab(documentId)}>
-          <ExternalLinkIcon className="size-4 mr-2" />
+          <ExternalLinkIcon className="w-4 h-4 mr-2" />
           Open in a New Tab
         </DropdownMenuItem>
       </DropdownMenuContent>

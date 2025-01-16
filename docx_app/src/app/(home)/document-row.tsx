@@ -5,17 +5,22 @@ import { Building2Icon, CircleUserIcon, MoreVertical, Table } from "lucide-react
 import {format} from "date-fns";
 import { Button } from "@/components/ui/button";
 import DocumentMenu from "./document-menu";
+import { useRouter } from "next/navigation";
 
 interface DocumentRowProps {
     document :Doc< "documents">;
 };
 
 const DocumentRow = ({document}:DocumentRowProps) => {
+    const router=useRouter();
     const onNewTabClick = (id:string) =>{
         window.open(`/documents/${id}`,"_blank");
     }
+     
     return ( 
-        <TableRow className="cursor-pointer">
+        <TableRow className="cursor-pointer"
+        onClick={()=>router.push(`/documents/${document._id}`)}
+        >
           <TableCell className="w-[50px]">
              <SiGoogledocs className="size-6 fill-blue-500"/>
           </TableCell>
