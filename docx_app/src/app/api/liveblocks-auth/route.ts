@@ -20,10 +20,15 @@ export async function POST(req:Request) {
     const isOwner= document.ownerId===user.id;
     const isOrgMem = !!(document.organizationId &&  document.organizationId===sessionClaims.org_id);
     if(!isOwner && !isOrgMem) return new Response("Unauthorized",{status:401});
+    const name=user.fullName ?? user.primaryEmailAddress?.emailAddress ??"Anonymous";
+    const number=name.split("").reduce((acc,char)=>acc+char.charCodeAt(0),0);
+    const hue=Math.abs(number)%360;
+    const color= `hsl(${hue},80%,60%)`;
     const session = liveblocks.prepareSession(user.id,{
         userInfo :{
-            name:user.fullName ?? user.primaryEmailAddress?.emailAddress ??"Anonymous",
+            name,
             avatar: user.imageUrl,
+            color,
         }
     });
     session.allow(room,session.FULL_ACCESS);
