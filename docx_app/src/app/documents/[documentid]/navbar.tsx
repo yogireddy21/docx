@@ -35,7 +35,12 @@ import { blob } from 'stream/consumers';
 import { OrganizationSwitcher, UserButton } from '@clerk/nextjs';
 import { Avatars } from './avatars';
 import Inbox from './inbox';
-const Navbar = () => {
+import { Doc } from '../../../../convex/_generated/dataModel';
+
+interface NavbarProps {
+  data: Doc<"documents">;
+}
+const Navbar = ({data}:NavbarProps) => {
 const {editor} =useEditorStore();
   const tableOptions = [
     { rows: 1, cols: 1 },
@@ -61,7 +66,7 @@ const {editor} =useEditorStore();
     const blob= new Blob([JSON.stringify(content)],{
         type: 'application/json',
     });
-    onDownload(blob,`document.json`)
+    onDownload(blob,`${data.title}.json`)
   }
   const onSaveHTML = ()=>{
     if(!editor) return;
@@ -69,7 +74,7 @@ const {editor} =useEditorStore();
     const blob= new Blob([content],{
         type: 'text/html',
     });
-    onDownload(blob,`document.html`)
+    onDownload(blob,`${data.title}.html`)
   }
  
   return (
@@ -86,7 +91,7 @@ const {editor} =useEditorStore();
         {/* Document Title & Menubar */}
         <div className="flex flex-col">
           {/* Document Title */}
-          <DocumentInput />
+          <DocumentInput title={data.title} id={data._id}/>
           
           {/* Menubar Below Title */}
           <div className="flex">
