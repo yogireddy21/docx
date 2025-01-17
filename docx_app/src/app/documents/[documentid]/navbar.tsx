@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from "next/link";
 import Image from "next/image";
+import { RenameDialog } from '@/app/(home)/rename-dialog';
+import { RemoveDialog } from '@/app/(home)/remove-dialog';
 import DocumentInput from "./document-input";
 import {
   Menubar,
@@ -60,42 +62,7 @@ const onNewDocument = () => {
     .catch(() => toast.error("Something went wrong"));
 }
 
-const removeMutation = useMutation(api.documents.removeById);
-const renameMutation = useMutation(api.documents.updateById);
 
-const onRemoveDocument = () => {
-  const promise = removeMutation({
-    id: data._id
-  })
-    .then(() => {
-      router.push("/documents");
-      toast.success("Document deleted");
-    })
-    .catch(() => toast.error("Failed to delete document"));
-
-  toast.promise(promise, {
-    loading: "Deleting document...",
-    success: "Document deleted!",
-    error: "Failed to delete document"
-  });
-};
-
-const onRenameDocument = (title: string) => {
-  if (title === data.title) return;
-  
-  const promise = renameMutation({
-    id: data._id,
-    title
-  })
-    .then(() => toast.success("Document renamed"))
-    .catch(() => toast.error("Failed to rename document"));
-
-  toast.promise(promise, {
-    loading: "Renaming document...",
-    success: "Document renamed!",
-    error: "Failed to rename document"
-  });
-};
 const {editor} =useEditorStore();
   const tableOptions = [
     { rows: 1, cols: 1 },
@@ -184,14 +151,22 @@ const {editor} =useEditorStore();
                     </MenubarSubContent>
                   </MenubarSub>
 
-                  <MenubarItem>
-                    <FileEditIcon className="w-4 h-4 mr-2" />
+                  
+
+                   <RenameDialog documentId={data._id} currentTitle={data.title}>
+                    <MenubarItem  onClick={(e) =>e.stopPropagation()}
+                    onSelect={(e)=>e.preventDefault()}>
+                     <FileEditIcon className="w-4 h-4 mr-2" />
                     Rename
                   </MenubarItem>
-                  <MenubarItem>
+                   </RenameDialog>
+                  <RemoveDialog documentId={data._id}>
+                    <MenubarItem onClick={(e) =>e.stopPropagation()}
+                    onSelect={(e)=>e.preventDefault()}>
                     <TrashIcon className="w-4 h-4 mr-2" />
                     Remove
                   </MenubarItem>
+                  </RemoveDialog>
                   <MenubarItem onSelect={() => window.print()}>
                     <PrinterIcon className="w-4 h-4 mr-2" />
                     Print
