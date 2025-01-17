@@ -23,8 +23,16 @@ import { useLiveblocksExtension } from "@liveblocks/react-tiptap";
 import Ruler from './ruler';
 import { Threads } from './threads';
 
-export const Editor = () =>{
-  const liveblocks=useLiveblocksExtension();
+interface EditorProps {
+  initialContent?: string | undefined;
+}
+
+export const Editor = ({initialContent}:EditorProps) =>{
+  const liveblocks=useLiveblocksExtension({initialContent,
+    offlineSupport_experimental:true
+  },
+    
+  );
 const {setEditor}=useEditorStore();
 const editor = useEditor({
     immediatelyRender:false,
