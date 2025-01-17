@@ -22,7 +22,7 @@ export async function POST(req:Request) {
     if(!isOwner && !isOrgMem) return new Response("Unauthorized",{status:401});
     const session = liveblocks.prepareSession(user.id,{
         userInfo :{
-            name:user.fullName ?? "Anonymous",
+            name:user.fullName ?? user.primaryEmailAddress?.emailAddress ??"Anonymous",
             avatar: user.imageUrl,
         }
     });
