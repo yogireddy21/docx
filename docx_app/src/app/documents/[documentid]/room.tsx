@@ -68,7 +68,7 @@ export function Room({ children }: { children: ReactNode }) {
             id: document.id,
             name: document.name, // Ensure this is a valid string
           }));
-        } catch (error) {
+        } catch{
           toast.error("Failed to fetch room information");
           return [];
         }

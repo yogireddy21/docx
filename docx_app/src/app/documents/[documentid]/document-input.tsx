@@ -1,4 +1,4 @@
-import { BsCloudCheck, BsPencil, BsX, BsCheck } from "react-icons/bs";
+import { BsPencil, BsX, BsCheck } from "react-icons/bs";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useRef, useState } from "react";
 import { useMutation } from "convex/react";

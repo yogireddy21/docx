@@ -1,5 +1,4 @@
 import { Extension } from "@tiptap/core";
-import TextStyle from "@tiptap/extension-text-style";
 
 // Extending Tiptap Commands
 declare module "@tiptap/core" {
