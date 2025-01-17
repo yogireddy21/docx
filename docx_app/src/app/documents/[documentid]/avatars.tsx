@@ -3,8 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { useOthers, useSelf } from "@liveblocks/react/suspense";
 
-const size = 32; // Slightly smaller size for Google Docs style
-const OVERLAP_AMOUNT = 16; // Amount of overlap between avatars
+const size = 32; // Slightly smaller size for Google Docs style // Amount of overlap between avatars
 
 export const Avatars = () => {
   return (
