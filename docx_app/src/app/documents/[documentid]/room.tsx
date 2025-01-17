@@ -8,51 +8,74 @@ import {
 } from "@liveblocks/react/suspense";
 import { useParams } from "next/navigation";
 import { FullscreenLoader } from "@/components/fullscreen-loader";
-import { getUsers } from "./actions";
+import { getUsers, getDocuments } from "./actions";
 import { toast } from "sonner";
+import { Id } from "../../../../convex/_generated/dataModel";
 
-type User={id:string;name:string;avatar:string};
+type User = { id: string; name: string; avatar: string };
 
 export function Room({ children }: { children: ReactNode }) {
- const params=useParams();
- const [users,setUsers]=useState<User[]>([]);
+  const params = useParams();
+  const [users, setUsers] = useState<User[]>([]);
 
- const fetchUsers = useMemo(
-    ()=>async ()=>{
-        try {
-            const list=await getUsers();
-            setUsers(list);
-        }catch{
-            toast.error("Failed to fetch users");
-        }
-    },[]
- );
+  // Fetch Users
+  const fetchUsers = useMemo(
+    () => async () => {
+      try {
+        const list = await getUsers();
+        setUsers(list);
+      } catch {
+        toast.error("Failed to fetch users");
+      }
+    },
+    []
+  );
 
- useEffect(()=>{
+  useEffect(() => {
     fetchUsers();
- },[fetchUsers])
-  return  (
-    <LiveblocksProvider 
-    throttle={16} 
-    authEndpoint={"/api/liveblocks-auth"}
-    resolveUsers={({userIds})=>{
+  }, [fetchUsers]);
+
+  return (
+    <LiveblocksProvider
+      throttle={16}
+      authEndpoint={async () => {
+        const endpoint = "/api/liveblocks-auth";
+        const room = params.documentid as string;
+        const response = await fetch(endpoint, {
+          method: "POST",
+          body: JSON.stringify({ room }),
+        });
+        return await response.json();
+      }}
+      resolveUsers={({ userIds }) => {
         return userIds.map(
-            (userId)=>users.find((user)=>user.id===userId)?? undefined
-        )
-    }}
-    resolveMentionSuggestions={({text})=>{
-        let filterdUsers=users;
-        if(text){
-            filterdUsers=users.filter((user)=>
-                user.name.toLowerCase().includes(text.toLowerCase()) 
-            )
+          (userId) => users.find((user) => user.id === userId) ?? undefined
+        );
+      }}
+      resolveMentionSuggestions={({ text }) => {
+        let filteredUsers = users;
+        if (text) {
+          filteredUsers = users.filter((user) =>
+            user.name.toLowerCase().includes(text.toLowerCase())
+          );
         }
-        return filterdUsers.map((user)=>user.id);
-    }}
-    resolveRoomsInfo={()=>[]}
+        return filteredUsers.map((user) => user.id);
+      }}
+      resolveRoomsInfo={async ({ roomIds }) => {
+        try {
+          const documents = await getDocuments(roomIds as Id<"documents">[]);
+          return documents.map((document) => ({
+            id: document.id,
+            name: document.name, // Ensure this is a valid string
+          }));
+        } catch (error) {
+          toast.error("Failed to fetch room information");
+          return [];
+        }
+      }}
     >
       <RoomProvider id={params.documentid as string}>
-        <ClientSideSuspense fallback={<FullscreenLoader label="Room Loading"/>}>
+        <ClientSideSuspense fallback={<FullscreenLoader label="Room Loading" />}>
           {children}
         </ClientSideSuspense>
       </RoomProvider>
