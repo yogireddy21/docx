@@ -36,11 +36,66 @@ import { OrganizationSwitcher, UserButton } from '@clerk/nextjs';
 import { Avatars } from './avatars';
 import Inbox from './inbox';
 import { Doc } from '../../../../convex/_generated/dataModel';
+import { useMutation } from 'convex/react';
+import { api } from '../../../../convex/_generated/api';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 interface NavbarProps {
   data: Doc<"documents">;
 }
 const Navbar = ({data}:NavbarProps) => {
+  const router = useRouter();
+const mutation = useMutation(api.documents.create);
+
+const onNewDocument = () => {
+  mutation({
+    title: "Untitled Document",
+    initialContent: ""
+  })
+    .then((id) => {
+      toast.success("Document created");
+      router.push(`/documents/${id}`);
+    })
+    .catch(() => toast.error("Something went wrong"));
+}
+
+const removeMutation = useMutation(api.documents.removeById);
+const renameMutation = useMutation(api.documents.updateById);
+
+const onRemoveDocument = () => {
+  const promise = removeMutation({
+    id: data._id
+  })
+    .then(() => {
+      router.push("/documents");
+      toast.success("Document deleted");
+    })
+    .catch(() => toast.error("Failed to delete document"));
+
+  toast.promise(promise, {
+    loading: "Deleting document...",
+    success: "Document deleted!",
+    error: "Failed to delete document"
+  });
+};
+
+const onRenameDocument = (title: string) => {
+  if (title === data.title) return;
+  
+  const promise = renameMutation({
+    id: data._id,
+    title
+  })
+    .then(() => toast.success("Document renamed"))
+    .catch(() => toast.error("Failed to rename document"));
+
+  toast.promise(promise, {
+    loading: "Renaming document...",
+    success: "Document renamed!",
+    error: "Failed to rename document"
+  });
+};
 const {editor} =useEditorStore();
   const tableOptions = [
     { rows: 1, cols: 1 },
@@ -103,7 +158,7 @@ const {editor} =useEditorStore();
                   File
                 </MenubarTrigger>
                 <MenubarContent>
-                  <MenubarItem>
+                  <MenubarItem onClick={onNewDocument}>
                     <FilePlusIcon className="w-4 h-4 mr-2" />
                     New Document
                   </MenubarItem>

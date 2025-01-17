@@ -94,10 +94,7 @@ const DocumentInput = ({ title, id }: DocumentInputProps) => {
           </button>
         </div>
       )}
-      {!isEditing && !isError && <BsCloudCheck size={18} className="text-blue-500" />}
-      {isError && (
-        <span className="text-red-500 text-sm">Failed to save. Try again.</span>
-      )}
+      
     </div>
   );
 };
