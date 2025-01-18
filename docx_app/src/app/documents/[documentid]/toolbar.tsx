@@ -10,6 +10,7 @@ import React,{ useState} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog,DialogContent,DialogFooter,DialogTitle,DialogHeader } from "@/components/ui/dialog";
+import { AIButton } from "./aidoceditor";
 
 
 
@@ -615,6 +616,12 @@ export const  Toolbar= () => {
               {sections[2].map((item)=>(
                 <ToolbarButton key={item.label} {...item} /> 
                 ))}
+
+                <div className="bg-[#F1F4F9] px-2.5 py-0.5 rounded-[24px] min-h-[40px] flex items-center gap-x-0.5 overflow-auto">
+            
+            <AIButton />
+           
+        </div>
              
             
 
